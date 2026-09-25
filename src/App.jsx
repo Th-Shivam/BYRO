@@ -52,8 +52,6 @@ function App() {
           </div>
 
           <img className="hero-mascot" src={mascot} alt="Byro mascot" />
-          <div className="hero-float-card hero-float-card--signal"><span className="hero-float-icon">✦</span><span><b>Signal found</b><small>Customer proof, ready to use</small></span></div>
-          <div className="hero-float-card hero-float-card--score"><span className="hero-score">92</span><span><b>Trust score</b><small>↑ 18% this month</small></span></div>
           <div className="workspace-preview">
             <div className="preview-top">
               <span className="preview-logo">✦ byro.</span>
