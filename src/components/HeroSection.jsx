@@ -11,7 +11,7 @@ export default function HeroSection() {
 
       <div className="hero-pill"><Sparkles size={12} /> The reputation workspace for expert-led B2B teams</div>
       <div className="hero-heading">
-        <h1>Turn company expertise<br />into <em>trusted content</em><br />and conversations.</h1>
+        <h1><span className="hero-title-line">Turn company expertise</span><br />into <em>trusted content</em><br />and conversations.</h1>
         <p>Byro connects interviews, customer proof and product knowledge to the goals your team cares about. It recommends what to say next, shows the evidence behind it and keeps the named author in control.</p>
         <div className="hero-actions">
           <a className="dark-button" href="#waitlist">See BYRO in action <ArrowRight size={16} /></a>
