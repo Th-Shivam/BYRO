@@ -4,6 +4,7 @@ import SplashCursor from './components/SplashCursor'
 import IntroAnimation from './components/IntroAnimation'
 import mascot from '../images/rook-mascot.png'
 import workspace from '../images/byro-work.png'
+import heroBackdrop from '../images/bg.png'
 import './App.css'
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
 
         <section className="hero" id="top">
           <div className="hero-grid" />
+          <img className="hero-backdrop" src={heroBackdrop} alt="" aria-hidden="true" />
           <div className="hero-pill"><Sparkles size={12} /> The reputation workspace for expert-led B2B teams</div>
           <div className="hero-heading">
             <h1>Turn company expertise<br />into <em>trusted content</em><br />and conversations.</h1>
@@ -42,15 +44,22 @@ function App() {
               <a className="dark-button" href="#waitlist">See BYRO in action <ArrowRight size={16} /></a>
               <a className="play-link" href="#how"><span><Play size={12} fill="currentColor" /></span> How it works</a>
             </div>
+            <div className="hero-proof-row" aria-label="BYRO benefits">
+              <span><i>✓</i> Evidence-backed</span>
+              <span><i>✓</i> Author-led</span>
+              <span><i>✓</i> Built for focus</span>
+            </div>
           </div>
 
           <img className="hero-mascot" src={mascot} alt="Byro mascot" />
+          <div className="hero-float-card hero-float-card--signal"><span className="hero-float-icon">✦</span><span><b>Signal found</b><small>Customer proof, ready to use</small></span></div>
+          <div className="hero-float-card hero-float-card--score"><span className="hero-score">92</span><span><b>Trust score</b><small>↑ 18% this month</small></span></div>
           <div className="workspace-preview">
             <div className="preview-top">
               <span className="preview-logo">✦ byro.</span>
               <span>Work⌄</span>
               <span className="preview-actions">☷ All &nbsp; + New &nbsp; ◉ &nbsp; ◎ &nbsp; ▣</span>
-              <span>⌕ Ask Byro &nbsp; ●</span>
+              <span>⌕ Ask Byro &nbsp; <b className="preview-avatar">AR</b></span>
             </div>
             <img src={workspace} alt="Byro reputation workspace" />
           </div>
