@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './IntroAnimation.css';
 import FolderFloat from './FolderFloat';
+import { ArrowRight } from 'lucide-react';
 
 const FOLDERS = [
   {
@@ -32,23 +33,23 @@ const FOLDERS = [
 export default function IntroAnimation({ onComplete }) {
   const [step, setStep] = useState(0);
   /*
-    step 0 → initial (folders fading in)
-    step 1 → folders fading out
+    step 0 → initial (folders fading in, waiting for user click)
+    step 1 → folders and button fading out
     step 2 → byro solution in
     step 3 → byro tagline in
     step 4 → closing overlay
   */
 
-  useEffect(() => {
-    const t = [
-      setTimeout(() => setStep(1), 3800), // wait for folders to open and be read
-      setTimeout(() => setStep(2), 4400),
-      setTimeout(() => setStep(3), 5000),
-      setTimeout(() => setStep(4), 5800),
-      setTimeout(() => onComplete(), 6700),
-    ];
-    return () => t.forEach(clearTimeout);
-  }, [onComplete]);
+  const handleSolutionClick = () => {
+    if (step > 0) return;
+    setStep(1);
+    
+    // Sequence after click
+    setTimeout(() => setStep(2), 700);
+    setTimeout(() => setStep(3), 1300);
+    setTimeout(() => setStep(4), 2100);
+    setTimeout(() => onComplete(), 3000);
+  };
 
   const closing = step >= 4;
 
@@ -57,29 +58,77 @@ export default function IntroAnimation({ onComplete }) {
       
       {/* ── Scattered Folders ─────────────────────────────────── */}
       <div className={`ia-folders ${step >= 1 ? 'ia-folders--out' : ''}`}>
-        <div className="ia-folders-title">Knowledge is scattered.</div>
-        <div className="ia-folders-container">
-          {FOLDERS.map((f, i) => (
-            <div key={f.id} className={`ia-folder-wrap ia-folder-wrap-${i}`}>
-              <FolderFloat
-                items={f.items}
-                label={f.label}
-                sublabel={f.sublabel}
-                defaultOpen={true}
-                trigger="none"
-                folderColor={f.color}
-                frontColor={f.front}
-                paperColor="#ffffff"
-                itemColor="#ffffff"
-                itemTextColor="#18181b"
-                labelColor="#ffffff"
-                width={190}
-                height={140}
-                stagger={40}
-              />
-            </div>
-          ))}
+        
+        <div className="ia-folders-layout">
+          {/* Left Folder */}
+          <div className="ia-folder-wrap ia-folder-wrap-0">
+            <FolderFloat
+              items={FOLDERS[0].items}
+              label={FOLDERS[0].label}
+              sublabel={FOLDERS[0].sublabel}
+              defaultOpen={true}
+              trigger="none"
+              folderColor={FOLDERS[0].color}
+              frontColor={FOLDERS[0].front}
+              paperColor="#ffffff"
+              itemColor="#ffffff"
+              itemTextColor="#18181b"
+              labelColor="#ffffff"
+              width={260}
+              height={190}
+              stagger={40}
+            />
+          </div>
+
+          {/* Center text overlapping or between */}
+          <div className="ia-folders-title-center">
+            Knowledge is scattered.
+          </div>
+
+          {/* Center Folder */}
+          <div className="ia-folder-wrap ia-folder-wrap-1">
+            <FolderFloat
+              items={FOLDERS[1].items}
+              label={FOLDERS[1].label}
+              sublabel={FOLDERS[1].sublabel}
+              defaultOpen={true}
+              trigger="none"
+              folderColor={FOLDERS[1].color}
+              frontColor={FOLDERS[1].front}
+              paperColor="#ffffff"
+              itemColor="#ffffff"
+              itemTextColor="#18181b"
+              labelColor="#ffffff"
+              width={260}
+              height={190}
+              stagger={40}
+            />
+          </div>
+
+          {/* Right Folder */}
+          <div className="ia-folder-wrap ia-folder-wrap-2">
+            <FolderFloat
+              items={FOLDERS[2].items}
+              label={FOLDERS[2].label}
+              sublabel={FOLDERS[2].sublabel}
+              defaultOpen={true}
+              trigger="none"
+              folderColor={FOLDERS[2].color}
+              frontColor={FOLDERS[2].front}
+              paperColor="#ffffff"
+              itemColor="#ffffff"
+              itemTextColor="#18181b"
+              labelColor="#ffffff"
+              width={260}
+              height={190}
+              stagger={40}
+            />
+          </div>
         </div>
+
+        <button className="ia-solution-btn" onClick={handleSolutionClick}>
+          Go with this solution <ArrowRight size={18} />
+        </button>
       </div>
 
       {/* ── Solution reveal ───────────────────────────── */}

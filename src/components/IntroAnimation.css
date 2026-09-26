@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   IntroAnimation  ·  "FolderFloat" scattered knowledge concept
+   IntroAnimation  ·  "FolderFloat" scattered knowledge concept (Interactive)
    Theme: matches homepage (white bg · purple #7751a1 · DM Sans)
    ══════════════════════════════════════════════════════════════════ */
 
@@ -47,50 +47,95 @@
   justify-content: center;
   gap: 60px;
   z-index: 2;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ia-folders--out {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(1.05);
   pointer-events: none;
 }
 
-.ia-folders-title {
-  font: 600 clamp(24px, 4vw, 40px) / 1.2 'DM Sans', sans-serif;
-  letter-spacing: -0.04em;
-  color: #302938;
-  opacity: 0;
-  animation: ia-fade-down 0.8s ease forwards 0.2s;
-}
-
-.ia-folders-container {
+.ia-folders-layout {
+  position: relative;
   display: flex;
-  gap: 30px;
+  gap: 40px;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 1000px;
-  padding: 0 20px;
+  max-width: 1200px;
+  padding: 0 40px;
+}
+
+/* The text placed in between the folders visually */
+.ia-folders-title-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: 700 clamp(32px, 5vw, 56px) / 1.1 'DM Sans', sans-serif;
+  letter-spacing: -0.04em;
+  color: #302938;
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  animation: ia-fade-in-title 0.8s ease forwards 0.8s;
+  /* subtle text shadow to make it legible over the folders */
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+@keyframes ia-fade-in-title {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 .ia-folder-wrap {
   opacity: 0;
-  animation: ia-fade-up 0.8s ease forwards;
+  animation: ia-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.ia-folder-wrap-0 { animation-delay: 0.4s; }
-.ia-folder-wrap-1 { animation-delay: 0.7s; }
-.ia-folder-wrap-2 { animation-delay: 1.0s; }
+/* Folders enter with a stagger */
+.ia-folder-wrap-0 { animation-delay: 0.2s; }
+.ia-folder-wrap-1 { animation-delay: 0.4s; transform-origin: center; } /* Center folder can be slightly offset if needed */
+.ia-folder-wrap-2 { animation-delay: 0.6s; }
 
-@keyframes ia-fade-down {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Let's slightly offset the center folder visually down so the text fits nicely above it */
+.ia-folder-wrap-1 .folder-float {
+  transform: translateY(30px);
 }
 
 @keyframes ia-fade-up {
-  from { opacity: 0; transform: translateY(30px); }
+  from { opacity: 0; transform: translateY(40px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Solution Button ────────────────────────────────────────────── */
+.ia-solution-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #7751a1;
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 16px 32px;
+  font: 600 16px 'DM Sans', sans-serif;
+  cursor: pointer;
+  opacity: 0;
+  animation: ia-fade-up 0.8s ease forwards 1.2s;
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(119, 81, 161, 0.25);
+}
+
+.ia-solution-btn:hover {
+  transform: scale(1.05);
+  background: #623f87;
+}
+.ia-solution-btn:active {
+  transform: scale(0.98);
 }
 
 /* ── Solution block ────────────────────────────────────────────── */
@@ -145,10 +190,14 @@
 }
 
 /* ── Responsive ─────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .ia-folders { gap: 30px; }
-  .ia-folders-container { gap: 20px; }
-  .ia-folders-title { font-size: 20px; }
+@media (max-width: 900px) {
+  .ia-folders-layout { gap: 20px; flex-direction: column; }
+  .ia-folders-title-center { position: relative; top: auto; left: auto; transform: none; white-space: normal; }
+  @keyframes ia-fade-in-title {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ia-folder-wrap-1 .folder-float { transform: none; }
 }
 
 @media (max-width: 500px) {
@@ -159,8 +208,9 @@
 @media (prefers-reduced-motion: reduce) {
   .ia-overlay--out,
   .ia-folders--out,
-  .ia-folders-title,
+  .ia-folders-title-center,
   .ia-folder-wrap,
+  .ia-solution-btn,
   .ia-byro,
   .ia-byro-tag {
     animation-duration:  0.01ms !important;
