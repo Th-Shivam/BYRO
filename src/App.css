@@ -8,19 +8,7 @@
 }
 
 /* ── Hero page entrance after intro ── */
-.home--animate-in {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.home--visible {
-  opacity: 1;
-  /* `none`, not translateY(0) — a transform here would become the containing
-     block for the fixed product preview and trap it inside the hero. */
-  transform: none;
-}
+/* Classes removed to allow IntroAnimation's curtain wipe to reveal the page naturally */
 .home-cursor {
   width: 100%;
   min-height: 100svh;

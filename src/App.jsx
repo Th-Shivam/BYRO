@@ -19,8 +19,8 @@ function App() {
         <IntroAnimation onComplete={() => setIntroComplete(true)} />
       )}
 
-      {/* Main page — fades in after intro */}
-      <main className={`home home--animate-in${introComplete ? ' home--visible' : ''}`}>
+      {/* Main page */}
+      <main className="home">
         <header className="home-nav">
           <a className="logo" href="#top"><span>✦</span> byro.</a>
           <nav>
