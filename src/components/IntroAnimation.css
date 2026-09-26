@@ -1,9 +1,8 @@
 /* ══════════════════════════════════════════════════════════════════
-   IntroAnimation  ·  "Problem → Solution" concept
+   IntroAnimation  ·  "FolderFloat" scattered knowledge concept
    Theme: matches homepage (white bg · purple #7751a1 · DM Sans)
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── Overlay ───────────────────────────────────────────────────── */
 .ia-overlay {
   position: fixed;
   inset: 0;
@@ -11,23 +10,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* matches hero gradient from App.css */
   background: linear-gradient(160deg, #fff 0%, #fff 45%, #f6f2ff 100%);
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
 }
 
-/* exit: scale + fade then clip upward */
 .ia-overlay--out {
   animation: ia-exit 0.9s cubic-bezier(0.86, 0, 0.07, 1) forwards;
 }
+
 @keyframes ia-exit {
   0%   { clip-path: inset(0 0 0 0); opacity: 1; }
   30%  { opacity: 0.6; }
   100% { clip-path: inset(0 0 100% 0); opacity: 0; }
 }
 
-/* ── Hero-style grid (same as homepage) ────────────────────────── */
 .ia-grid {
   position: absolute;
   inset: 0;
@@ -37,102 +34,76 @@
     linear-gradient(90deg, rgba(133, 106, 185, 0.1) 1px, transparent 1px);
   background-size: 82px 82px;
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 80%);
+  z-index: 1;
 }
 
-/* ── Stage (centers everything) ────────────────────────────────── */
-.ia-stage {
-  position: relative;
-  width: min(580px, 90vw);
+/* ── Folders Layout ────────────────────────────────────────────── */
+.ia-folders {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  gap: 60px;
+  z-index: 2;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   Problem cards
-   Each starts off-screen and flies to its resting position.
-   ══════════════════════════════════════════════════════════════════ */
-.ia-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 18px 22px;
-  border: 1px solid rgba(119, 81, 161, 0.18);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow:
-    0 4px 24px rgba(119, 81, 161, 0.08),
-    0 1px 3px rgba(119, 81, 161, 0.06);
-  backdrop-filter: blur(10px);
-  /* initial (off-screen) state */
+.ia-folders--out {
   opacity: 0;
-  transition:
-    opacity  0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.95);
+  pointer-events: none;
 }
 
-/* ── Off-screen starting positions ─────────────────────────────── */
-.ia-card--left   { transform: translateX(-140%); }
-.ia-card--right  { transform: translateX( 140%); }
-.ia-card--bottom { transform: translateY( 120%); }
-
-/* ── Settled (in) state ─────────────────────────────────────────── */
-.ia-card--left.ia-card--in,
-.ia-card--right.ia-card--in,
-.ia-card--bottom.ia-card--in {
-  opacity: 1;
-  transform: translate(0, 0);
-}
-
-/* ── Stagger the three cards ────────────────────────────────────── */
-.ia-card--left   { transition-delay: 0ms; }
-.ia-card--right  { transition-delay: 120ms; }
-.ia-card--bottom { transition-delay: 240ms; }
-
-.ia-card-emoji {
-  font-size: 26px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.ia-card-text {
+.ia-folders-title {
+  font: 600 clamp(24px, 4vw, 40px) / 1.2 'DM Sans', sans-serif;
+  letter-spacing: -0.04em;
   color: #302938;
-  font-size: clamp(13px, 2vw, 16px);
-  font-weight: 500;
-  line-height: 1.35;
+  opacity: 0;
+  animation: ia-fade-down 0.8s ease forwards 0.2s;
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   Solution block  (appears after cards settle)
-   ══════════════════════════════════════════════════════════════════ */
+.ia-folders-container {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  padding: 0 20px;
+}
+
+.ia-folder-wrap {
+  opacity: 0;
+  animation: ia-fade-up 0.8s ease forwards;
+}
+
+.ia-folder-wrap-0 { animation-delay: 0.4s; }
+.ia-folder-wrap-1 { animation-delay: 0.7s; }
+.ia-folder-wrap-2 { animation-delay: 1.0s; }
+
+@keyframes ia-fade-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ia-fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Solution block ────────────────────────────────────────────── */
 .ia-solution {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  /* hidden until step 2 */
+  gap: 12px;
+  position: absolute;
+  z-index: 3;
   pointer-events: none;
 }
 
-/* ── "The solution?" label ──────────────────────────────────────── */
-.ia-solution-label {
-  margin: 0;
-  font: 600 clamp(10px, 1.4vw, 13px) / 1 'DM Sans', sans-serif;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(119, 81, 161, 0.6);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.ia-solution-label.in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── byro wordmark ──────────────────────────────────────────────── */
 .ia-byro {
   display: flex;
   align-items: baseline;
@@ -158,16 +129,15 @@
   color: #7751a1;
 }
 
-/* ── Tagline ────────────────────────────────────────────────────── */
 .ia-byro-tag {
   margin: 0;
-  font: 600 clamp(9px, 1.1vw, 12px) / 1 'DM Sans', sans-serif;
+  font: 600 clamp(10px, 1.2vw, 14px) / 1 'DM Sans', sans-serif;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(119, 81, 161, 0.5);
+  color: rgba(119, 81, 161, 0.65);
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.5s 0.1s ease, transform 0.5s 0.1s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .ia-byro-tag.in {
   opacity: 1;
@@ -175,20 +145,23 @@
 }
 
 /* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ia-folders { gap: 30px; }
+  .ia-folders-container { gap: 20px; }
+  .ia-folders-title { font-size: 20px; }
+}
+
 @media (max-width: 500px) {
-  .ia-stage      { gap: 12px; }
-  .ia-card       { padding: 14px 16px; gap: 10px; border-radius: 14px; }
-  .ia-card-emoji { font-size: 22px; }
   .ia-byro-word,
   .ia-byro-dot   { font-size: clamp(54px, 18vw, 80px); }
 }
 
-/* ── Reduced motion ─────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .ia-overlay--out,
-  .ia-card,
+  .ia-folders--out,
+  .ia-folders-title,
+  .ia-folder-wrap,
   .ia-byro,
-  .ia-solution-label,
   .ia-byro-tag {
     animation-duration:  0.01ms !important;
     transition-duration: 0.01ms !important;
