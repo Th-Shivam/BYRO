@@ -1,28 +1,27 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './IntroAnimation.css';
 
 const STORY_LINES = [
-  { text: "Your company knows things.", delay: 600 },
-  { text: "Expertise built over years.", delay: 1500 },
-  { text: "Buried in calls, docs, and heads.", delay: 2400 },
-  { text: "Never reaching the people who need it.", delay: 3300 },
+  { text: 'Your company knows things.', delay: 450 },
+  { text: 'Expertise built over years.', delay: 1200 },
+  { text: 'Now it can move with you.', delay: 2050 },
 ];
 
-const REVEAL_START = 4800;
+const REVEAL_START = 4200;
 
-// Particle class for background
-function Particle(canvas) {
-  this.x = Math.random() * canvas.width;
-  this.y = Math.random() * canvas.height;
-  this.vx = (Math.random() - 0.5) * 0.3;
-  this.vy = (Math.random() - 0.5) * 0.3;
-  this.size = Math.random() * 1.5 + 0.5;
-  this.alpha = Math.random() * 0.4 + 0.1;
-  this.alphaDir = Math.random() > 0.5 ? 1 : -1;
+function createParticle(canvas) {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.18,
+    vy: (Math.random() - 0.5) * 0.18,
+    size: Math.random() * 1.7 + 0.5,
+    alpha: Math.random() * 0.35 + 0.12,
+    alphaDir: Math.random() > 0.5 ? 1 : -1,
+  };
 }
 
 export default function IntroAnimation({ onComplete }) {
-  const [phase, setPhase] = useState('idle'); // idle | lines | logo | reveal
   const [visibleLines, setVisibleLines] = useState([]);
   const [logoVisible, setLogoVisible] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -30,128 +29,90 @@ export default function IntroAnimation({ onComplete }) {
   const rafRef = useRef(null);
   const particlesRef = useRef([]);
 
-  // Canvas particle animation
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return undefined;
     const ctx = canvas.getContext('2d');
-
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      particlesRef.current = Array.from({ length: 80 }, () => new Particle(canvas));
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * ratio;
+      canvas.height = window.innerHeight * ratio;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      particlesRef.current = Array.from({ length: 54 }, () => createParticle({ width: window.innerWidth, height: window.innerHeight }));
     };
     resize();
     window.addEventListener('resize', resize);
-
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesRef.current.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha += p.alphaDir * 0.003;
-        if (p.alpha <= 0.05 || p.alpha >= 0.5) p.alphaDir *= -1;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      particlesRef.current.forEach((particle) => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.alpha += particle.alphaDir * 0.002;
+        if (particle.alpha <= 0.08 || particle.alpha >= 0.42) particle.alphaDir *= -1;
+        if (particle.x < -5) particle.x = window.innerWidth + 5;
+        if (particle.x > window.innerWidth + 5) particle.x = -5;
+        if (particle.y < -5) particle.y = window.innerHeight + 5;
+        if (particle.y > window.innerHeight + 5) particle.y = -5;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha})`;
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(119, 81, 161, ${particle.alpha})`;
         ctx.fill();
-      });
-      // Draw subtle connecting lines
-      particlesRef.current.forEach((p, i) => {
-        for (let j = i + 1; j < particlesRef.current.length; j++) {
-          const q = particlesRef.current[j];
-          const dist = Math.hypot(p.x - q.x, p.y - q.y);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(139, 92, 246, ${0.06 * (1 - dist / 100)})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.stroke();
-          }
-        }
       });
       rafRef.current = requestAnimationFrame(draw);
     };
     draw();
-
     return () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
-  // Story sequencing
   useEffect(() => {
-    setPhase('lines');
-
-    STORY_LINES.forEach((line, i) => {
-      setTimeout(() => {
-        setVisibleLines((prev) => [...prev, i]);
-      }, line.delay);
-    });
-
-    // Fade lines out, show logo
-    setTimeout(() => {
-      setVisibleLines('fade');
-      setTimeout(() => {
-        setLogoVisible(true);
-      }, 400);
-    }, REVEAL_START - 800);
-
-    // Trigger reveal
-    setTimeout(() => {
+    const timers = STORY_LINES.map((line, index) => setTimeout(() => {
+      setVisibleLines((previous) => [...previous, index]);
+    }, line.delay));
+    const logoTimer = setTimeout(() => setLogoVisible(true), REVEAL_START - 750);
+    const closeTimer = setTimeout(() => {
       setClosing(true);
-      setTimeout(() => {
-        onComplete();
-      }, 900);
+      setTimeout(onComplete, 780);
     }, REVEAL_START);
-  }, []);
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(logoTimer);
+      clearTimeout(closeTimer);
+    };
+  }, [onComplete]);
 
   return (
-    <div className={`intro-overlay${closing ? ' intro-overlay--closing' : ''}`}>
-      {/* Particle Canvas */}
-      <canvas ref={canvasRef} className="intro-canvas" />
-
-      {/* Gradient orbs */}
-      <div className="intro-orb intro-orb--1" />
-      <div className="intro-orb intro-orb--2" />
-      <div className="intro-orb intro-orb--3" />
-
-      {/* Story Lines */}
-      <div className={`intro-lines${visibleLines === 'fade' ? ' intro-lines--fade' : ''}`}>
-        {STORY_LINES.map((line, i) => (
-          <div
-            key={i}
-            className={`intro-line${
-              Array.isArray(visibleLines) && visibleLines.includes(i) ? ' intro-line--visible' : ''
-            }${
-              Array.isArray(visibleLines) && visibleLines.includes(i) && i < visibleLines[visibleLines.length - 1]
-                ? ' intro-line--dim'
-                : ''
-            }`}
-          >
+    <div className={`intro-overlay${closing ? ' intro-overlay--closing' : ''}`} aria-label="Loading BYRO">
+      <canvas ref={canvasRef} className="intro-canvas" aria-hidden="true" />
+      <div className="intro-wash intro-wash--top" aria-hidden="true" />
+      <div className="intro-wash intro-wash--bottom" aria-hidden="true" />
+      <div className={`intro-lines${logoVisible ? ' intro-lines--fade' : ''}`}>
+        {STORY_LINES.map((line, index) => (
+          <div key={line.text} className={`intro-line${visibleLines.includes(index) ? ' intro-line--visible' : ''}${visibleLines.includes(index) && index < visibleLines[visibleLines.length - 1] ? ' intro-line--dim' : ''}`}>
+            <span className="intro-line-number">0{index + 1}</span>
             <span className="intro-line-bar" />
             <span className="intro-line-text">{line.text}</span>
           </div>
         ))}
       </div>
-
-      {/* Logo Reveal */}
       <div className={`intro-logo${logoVisible ? ' intro-logo--visible' : ''}`}>
-        <div className="intro-logo-mark">✦</div>
+        <div className="intro-logo-mark" aria-hidden="true">
+          <span className="intro-logo-ring intro-logo-ring--outer" />
+          <span className="intro-logo-ring intro-logo-ring--inner" />
+          <span className="intro-logo-star">✦</span>
+        </div>
         <div className="intro-logo-word">byro<span>.</span></div>
-        <div className="intro-logo-tag">The Reputation Workspace</div>
+        <div className="intro-logo-tag">The reputation workspace</div>
       </div>
-
-      {/* Bottom progress bar */}
-      <div className="intro-progress">
-        <div className="intro-progress-bar" style={{ animationDuration: `${REVEAL_START}ms` }} />
+      <div className="intro-footer">
+        <span>MADE FOR THE KNOWLEDGE-LED</span>
+        <span className="intro-loader-status"><i /> Preparing your workspace</span>
       </div>
+      <div className="intro-progress" aria-hidden="true"><div className="intro-progress-bar" /></div>
     </div>
   );
 }
