@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './IntroAnimation.css';
 import FolderFloat from './FolderFloat';
-import { ArrowRight } from 'lucide-react';
 
 const FOLDERS = [
   {
@@ -27,21 +26,37 @@ const FOLDERS = [
     items: ["Unanswered questions", "Missed proof", "Slow replies", "Lost trust"],
     color: "#a49ba9",
     front: "#8c8393",
+  },
+  {
+    id: 'emails',
+    label: "Emails & Threads",
+    sublabel: "Buried decisions",
+    items: ["Lost attachments", "Buried context", "No history", "Forward chains"],
+    color: "#92899b",
+    front: "#7d7486",
   }
 ];
 
 export default function IntroAnimation({ onComplete }) {
   const [step, setStep] = useState(0);
-
-  const handleSolutionClick = () => {
-    if (step > 0) return;
-    setStep(1);
-    
-    // Sequence after click
-    setTimeout(() => setStep(2), 700);
-    setTimeout(() => setStep(3), 1300);
-    setTimeout(() => setStep(4), 2100);
-    setTimeout(() => onComplete(), 3000);
+  const [openedCount, setOpenedCount] = useState(0);
+  const openedSet = useRef(new Set());
+  
+  const handleOpenChange = (isOpen, id) => {
+    if (isOpen) {
+      openedSet.current.add(id);
+      const count = openedSet.current.size;
+      setOpenedCount(count);
+      
+      if (count === FOLDERS.length && step === 0) {
+        // All folders opened! Wait a moment, then auto-advance
+        setStep(1);
+        setTimeout(() => setStep(2), 700);
+        setTimeout(() => setStep(3), 1300);
+        setTimeout(() => setStep(4), 2100);
+        setTimeout(() => onComplete(), 3000);
+      }
+    }
   };
 
   const closing = step >= 4;
@@ -59,67 +74,29 @@ export default function IntroAnimation({ onComplete }) {
           </div>
 
           {/* Scattered Folders (Hover to open) */}
-          <div className="ia-folder-wrap ia-folder-wrap-0">
-            <FolderFloat
-              items={FOLDERS[0].items}
-              label={FOLDERS[0].label}
-              sublabel={FOLDERS[0].sublabel}
-              defaultOpen={false}
-              trigger="hover"
-              folderColor={FOLDERS[0].color}
-              frontColor={FOLDERS[0].front}
-              paperColor="#ffffff"
-              itemColor="#ffffff"
-              itemTextColor="#18181b"
-              labelColor="#ffffff"
-              width={260}
-              height={190}
-              stagger={40}
-            />
-          </div>
-
-          <div className="ia-folder-wrap ia-folder-wrap-1">
-            <FolderFloat
-              items={FOLDERS[1].items}
-              label={FOLDERS[1].label}
-              sublabel={FOLDERS[1].sublabel}
-              defaultOpen={false}
-              trigger="hover"
-              folderColor={FOLDERS[1].color}
-              frontColor={FOLDERS[1].front}
-              paperColor="#ffffff"
-              itemColor="#ffffff"
-              itemTextColor="#18181b"
-              labelColor="#ffffff"
-              width={260}
-              height={190}
-              stagger={40}
-            />
-          </div>
-
-          <div className="ia-folder-wrap ia-folder-wrap-2">
-            <FolderFloat
-              items={FOLDERS[2].items}
-              label={FOLDERS[2].label}
-              sublabel={FOLDERS[2].sublabel}
-              defaultOpen={false}
-              trigger="hover"
-              folderColor={FOLDERS[2].color}
-              frontColor={FOLDERS[2].front}
-              paperColor="#ffffff"
-              itemColor="#ffffff"
-              itemTextColor="#18181b"
-              labelColor="#ffffff"
-              width={260}
-              height={190}
-              stagger={40}
-            />
-          </div>
+          {FOLDERS.map((f, i) => (
+            <div key={f.id} className={`ia-folder-wrap ia-folder-wrap-${i}`}>
+              <FolderFloat
+                items={f.items}
+                label={f.label}
+                sublabel={f.sublabel}
+                defaultOpen={false}
+                trigger="hover"
+                stayOpen={true}
+                onOpenChange={(isOpen) => handleOpenChange(isOpen, f.id)}
+                folderColor={f.color}
+                frontColor={f.front}
+                paperColor="#ffffff"
+                itemColor="#ffffff"
+                itemTextColor="#18181b"
+                labelColor="#ffffff"
+                width={260}
+                height={190}
+                stagger={40}
+              />
+            </div>
+          ))}
         </div>
-
-        <button className="ia-solution-btn" onClick={handleSolutionClick}>
-          Go with this solution <ArrowRight size={18} />
-        </button>
       </div>
 
       {/* ── Solution reveal ───────────────────────────── */}
