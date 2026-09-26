@@ -45,7 +45,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 60px;
+  gap: 40px;
   z-index: 2;
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -56,18 +56,15 @@
   pointer-events: none;
 }
 
+/* Container for scattered floating layout */
 .ia-folders-layout {
   position: relative;
-  display: flex;
-  gap: 40px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  padding: 0 40px;
+  width: 900px;
+  height: 500px;
+  max-width: 95vw;
 }
 
-/* The text placed in between the folders visually */
+/* Center text */
 .ia-folders-title-center {
   position: absolute;
   top: 50%;
@@ -81,8 +78,7 @@
   z-index: 10;
   opacity: 0;
   animation: ia-fade-in-title 0.8s ease forwards 0.8s;
-  /* subtle text shadow to make it legible over the folders */
-  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.95), 0 0 40px rgba(255, 255, 255, 0.9);
   white-space: nowrap;
 }
 
@@ -91,25 +87,55 @@
   to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
+/* Scattered Folders Positions */
 .ia-folder-wrap {
+  position: absolute;
   opacity: 0;
-  animation: ia-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Add subtle infinite floating animation */
+  animation: ia-fade-in-folder 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             ia-float 6s ease-in-out infinite alternate;
 }
 
-/* Folders enter with a stagger */
-.ia-folder-wrap-0 { animation-delay: 0.2s; }
-.ia-folder-wrap-1 { animation-delay: 0.4s; transform-origin: center; } /* Center folder can be slightly offset if needed */
-.ia-folder-wrap-2 { animation-delay: 0.6s; }
-
-/* Let's slightly offset the center folder visually down so the text fits nicely above it */
-.ia-folder-wrap-1 .folder-float {
-  transform: translateY(30px);
+/* Folder 0: Top Left */
+.ia-folder-wrap-0 {
+  top: 20px;
+  left: 0;
+  animation-delay: 0.2s, 0.2s;
+  transform-origin: center;
 }
 
-@keyframes ia-fade-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Folder 1: Bottom Right */
+.ia-folder-wrap-1 {
+  bottom: 0px;
+  right: 0px;
+  animation-delay: 0.4s, 1s;
+  transform-origin: center;
 }
+
+/* Folder 2: Top Right (scattered) */
+.ia-folder-wrap-2 {
+  top: -40px;
+  right: 150px;
+  animation-delay: 0.6s, 1.8s;
+  transform-origin: center;
+}
+
+@keyframes ia-fade-in-folder {
+  from { opacity: 0; margin-top: 40px; }
+  to { opacity: 1; margin-top: 0; }
+}
+
+@keyframes ia-float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(5px) rotate(-1deg); }
+}
+
+/* Rotations for a natural scattered look */
+.ia-folder-wrap-0 .folder-float { transform: rotate(-8deg); }
+.ia-folder-wrap-1 .folder-float { transform: rotate(6deg); }
+.ia-folder-wrap-2 .folder-float { transform: rotate(-4deg); }
+
 
 /* ── Solution Button ────────────────────────────────────────────── */
 .ia-solution-btn {
@@ -124,10 +150,11 @@
   font: 600 16px 'DM Sans', sans-serif;
   cursor: pointer;
   opacity: 0;
-  animation: ia-fade-up 0.8s ease forwards 1.2s;
+  animation: ia-fade-in-folder 0.8s ease forwards 1.2s;
   transition: transform 0.2s ease, background 0.2s ease;
   z-index: 10;
   box-shadow: 0 8px 24px rgba(119, 81, 161, 0.25);
+  margin-top: -20px;
 }
 
 .ia-solution-btn:hover {
@@ -191,18 +218,28 @@
 
 /* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .ia-folders-layout { gap: 20px; flex-direction: column; }
-  .ia-folders-title-center { position: relative; top: auto; left: auto; transform: none; white-space: normal; }
-  @keyframes ia-fade-in-title {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .ia-folders-layout {
+    height: 600px;
+    width: 100%;
   }
-  .ia-folder-wrap-1 .folder-float { transform: none; }
+  .ia-folder-wrap-0 { top: 0; left: 10px; }
+  .ia-folder-wrap-1 { bottom: 0; right: 10px; }
+  .ia-folder-wrap-2 { top: 180px; left: 50%; transform: translateX(-50%); right: auto; }
+  
+  .ia-folders-title-center {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: normal;
+  }
 }
 
 @media (max-width: 500px) {
   .ia-byro-word,
   .ia-byro-dot   { font-size: clamp(54px, 18vw, 80px); }
+  .ia-folders-layout { height: 750px; }
+  .ia-folder-wrap-0 { top: 0; left: 50%; transform: translateX(-50%); }
+  .ia-folder-wrap-1 { bottom: 0; right: auto; left: 50%; transform: translateX(-50%); }
+  .ia-folder-wrap-2 { top: 250px; left: 50%; transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

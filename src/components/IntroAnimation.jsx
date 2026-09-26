@@ -32,13 +32,6 @@ const FOLDERS = [
 
 export default function IntroAnimation({ onComplete }) {
   const [step, setStep] = useState(0);
-  /*
-    step 0 → initial (folders fading in, waiting for user click)
-    step 1 → folders and button fading out
-    step 2 → byro solution in
-    step 3 → byro tagline in
-    step 4 → closing overlay
-  */
 
   const handleSolutionClick = () => {
     if (step > 0) return;
@@ -60,14 +53,19 @@ export default function IntroAnimation({ onComplete }) {
       <div className={`ia-folders ${step >= 1 ? 'ia-folders--out' : ''}`}>
         
         <div className="ia-folders-layout">
-          {/* Left Folder */}
+          {/* Center text */}
+          <div className="ia-folders-title-center">
+            Knowledge is scattered.
+          </div>
+
+          {/* Scattered Folders (Hover to open) */}
           <div className="ia-folder-wrap ia-folder-wrap-0">
             <FolderFloat
               items={FOLDERS[0].items}
               label={FOLDERS[0].label}
               sublabel={FOLDERS[0].sublabel}
-              defaultOpen={true}
-              trigger="none"
+              defaultOpen={false}
+              trigger="hover"
               folderColor={FOLDERS[0].color}
               frontColor={FOLDERS[0].front}
               paperColor="#ffffff"
@@ -80,19 +78,13 @@ export default function IntroAnimation({ onComplete }) {
             />
           </div>
 
-          {/* Center text overlapping or between */}
-          <div className="ia-folders-title-center">
-            Knowledge is scattered.
-          </div>
-
-          {/* Center Folder */}
           <div className="ia-folder-wrap ia-folder-wrap-1">
             <FolderFloat
               items={FOLDERS[1].items}
               label={FOLDERS[1].label}
               sublabel={FOLDERS[1].sublabel}
-              defaultOpen={true}
-              trigger="none"
+              defaultOpen={false}
+              trigger="hover"
               folderColor={FOLDERS[1].color}
               frontColor={FOLDERS[1].front}
               paperColor="#ffffff"
@@ -105,14 +97,13 @@ export default function IntroAnimation({ onComplete }) {
             />
           </div>
 
-          {/* Right Folder */}
           <div className="ia-folder-wrap ia-folder-wrap-2">
             <FolderFloat
               items={FOLDERS[2].items}
               label={FOLDERS[2].label}
               sublabel={FOLDERS[2].sublabel}
-              defaultOpen={true}
-              trigger="none"
+              defaultOpen={false}
+              trigger="hover"
               folderColor={FOLDERS[2].color}
               frontColor={FOLDERS[2].front}
               paperColor="#ffffff"
