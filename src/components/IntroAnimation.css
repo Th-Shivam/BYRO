@@ -1,350 +1,195 @@
 /* ══════════════════════════════════════════════════════════════════
-   IntroAnimation  —  "Signal Decoding" concept
-   Design: pure near-black · monospace scramble · HUD geometry
-   No particles, no blobs, no generic gradients.
+   IntroAnimation  ·  "Problem → Solution" concept
+   Theme: matches homepage (white bg · purple #7751a1 · DM Sans)
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── Root ──────────────────────────────────────────────────────── */
-.ia-root {
+/* ── Overlay ───────────────────────────────────────────────────── */
+.ia-overlay {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: #05050a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* matches hero gradient from App.css */
+  background: linear-gradient(160deg, #fff 0%, #fff 45%, #f6f2ff 100%);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* exit: scale + fade then clip upward */
+.ia-overlay--out {
+  animation: ia-exit 0.9s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+}
+@keyframes ia-exit {
+  0%   { clip-path: inset(0 0 0 0); opacity: 1; }
+  30%  { opacity: 0.6; }
+  100% { clip-path: inset(0 0 100% 0); opacity: 0; }
+}
+
+/* ── Hero-style grid (same as homepage) ────────────────────────── */
+.ia-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(133, 106, 185, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(133, 106, 185, 0.1) 1px, transparent 1px);
+  background-size: 82px 82px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 80%);
+}
+
+/* ── Stage (centers everything) ────────────────────────────────── */
+.ia-stage {
+  position: relative;
+  width: min(580px, 90vw);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  font-family: 'DM Sans', sans-serif;
-  /* super-subtle noise grain via SVG data-uri */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-}
-
-/* ── Exit animation ────────────────────────────────────────────── */
-/*
-  Phase 1 (0 → 0.3s): content fades + scales slightly
-  Phase 2 (0.2s → 1s): overlay clips upward like a curtain
-*/
-.ia-closing {
-  animation: ia-curtain 0.9s cubic-bezier(0.86, 0, 0.07, 1) 0.2s both;
-}
-.ia-closing .ia-body,
-.ia-closing .ia-hud-top,
-.ia-closing .ia-bottom {
-  animation: ia-fade-out 0.3s ease forwards;
-}
-@keyframes ia-curtain {
-  from { clip-path: inset(0 0 0 0 round 0px); }
-  to   { clip-path: inset(0 0 100% 0 round 0px); }
-}
-@keyframes ia-fade-out {
-  to { opacity: 0; transform: scale(1.025); }
-}
-
-/* ── Ambient scan beam (slow diagnostic sweep) ─────────────────── */
-.ia-beam {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 140px;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(119, 81, 161, 0.055) 40%,
-    rgba(119, 81, 161, 0.09) 50%,
-    rgba(119, 81, 161, 0.055) 60%,
-    transparent 100%
-  );
-  animation: beam-sweep 3.8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-}
-@keyframes beam-sweep {
-  0%   { transform: translateY(-140px); opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  100% { transform: translateY(100vh);   opacity: 0; }
-}
-
-/* ── HUD corner brackets ───────────────────────────────────────── */
-.ia-corner {
-  position: absolute;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  pointer-events: none;
-  transition: none;
-}
-/* each corner: draw the two lines by animating width + height */
-.ia-tl {
-  top: 30px; left: 30px;
-  border-top:  1px solid rgba(119, 81, 161, 0.6);
-  border-left: 1px solid rgba(119, 81, 161, 0.6);
-  animation: corner-in 0.45s 0.1s cubic-bezier(0.16,1,0.3,1) forwards;
-}
-.ia-tr {
-  top: 30px; right: 30px;
-  border-top:   1px solid rgba(119, 81, 161, 0.6);
-  border-right: 1px solid rgba(119, 81, 161, 0.6);
-  animation: corner-in 0.45s 0.17s cubic-bezier(0.16,1,0.3,1) forwards;
-}
-.ia-bl {
-  bottom: 30px; left: 30px;
-  border-bottom: 1px solid rgba(119, 81, 161, 0.6);
-  border-left:   1px solid rgba(119, 81, 161, 0.6);
-  animation: corner-in 0.45s 0.24s cubic-bezier(0.16,1,0.3,1) forwards;
-}
-.ia-br {
-  bottom: 30px; right: 30px;
-  border-bottom: 1px solid rgba(119, 81, 161, 0.6);
-  border-right:  1px solid rgba(119, 81, 161, 0.6);
-  animation: corner-in 0.45s 0.31s cubic-bezier(0.16,1,0.3,1) forwards;
-}
-@keyframes corner-in {
-  to { width: 38px; height: 38px; opacity: 1; }
-}
-
-/* ── Top HUD bar ───────────────────────────────────────────────── */
-.ia-hud-top {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 30px 76px;
-  opacity: 0;
-  animation: ia-fade-in 0.55s 0.45s ease forwards;
+  gap: 16px;
 }
-.ia-hud-id {
-  font: 600 8px / 1 'DM Sans', sans-serif;
+
+/* ══════════════════════════════════════════════════════════════════
+   Problem cards
+   Each starts off-screen and flies to its resting position.
+   ══════════════════════════════════════════════════════════════════ */
+.ia-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 22px;
+  border: 1px solid rgba(119, 81, 161, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 4px 24px rgba(119, 81, 161, 0.08),
+    0 1px 3px rgba(119, 81, 161, 0.06);
+  backdrop-filter: blur(10px);
+  /* initial (off-screen) state */
+  opacity: 0;
+  transition:
+    opacity  0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Off-screen starting positions ─────────────────────────────── */
+.ia-card--left   { transform: translateX(-140%); }
+.ia-card--right  { transform: translateX( 140%); }
+.ia-card--bottom { transform: translateY( 120%); }
+
+/* ── Settled (in) state ─────────────────────────────────────────── */
+.ia-card--left.ia-card--in,
+.ia-card--right.ia-card--in,
+.ia-card--bottom.ia-card--in {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ── Stagger the three cards ────────────────────────────────────── */
+.ia-card--left   { transition-delay: 0ms; }
+.ia-card--right  { transition-delay: 120ms; }
+.ia-card--bottom { transition-delay: 240ms; }
+
+.ia-card-emoji {
+  font-size: 26px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.ia-card-text {
+  color: #302938;
+  font-size: clamp(13px, 2vw, 16px);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Solution block  (appears after cards settle)
+   ══════════════════════════════════════════════════════════════════ */
+.ia-solution {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  /* hidden until step 2 */
+  pointer-events: none;
+}
+
+/* ── "The solution?" label ──────────────────────────────────────── */
+.ia-solution-label {
+  margin: 0;
+  font: 600 clamp(10px, 1.4vw, 13px) / 1 'DM Sans', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(119, 81, 161, 0.6);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.ia-solution-label.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── byro wordmark ──────────────────────────────────────────────── */
+.ia-byro {
+  display: flex;
+  align-items: baseline;
+  opacity: 0;
+  transform: scale(0.82);
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ia-byro.in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ia-byro-word {
+  font: 700 clamp(64px, 12vw, 130px) / 0.9 'DM Sans', sans-serif;
+  letter-spacing: -0.08em;
+  color: #17151b;
+}
+.ia-byro-dot {
+  font: 700 clamp(64px, 12vw, 130px) / 0.9 'DM Sans', sans-serif;
+  letter-spacing: -0.08em;
+  color: #7751a1;
+}
+
+/* ── Tagline ────────────────────────────────────────────────────── */
+.ia-byro-tag {
+  margin: 0;
+  font: 600 clamp(9px, 1.1vw, 12px) / 1 'DM Sans', sans-serif;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(119, 81, 161, 0.5);
-}
-.ia-hud-frame {
-  font: 400 11px / 1 'Courier New', Courier, monospace;
-  color: rgba(119, 81, 161, 0.38);
-  letter-spacing: 0.04em;
-}
-
-/* ── Body (flex-grow center) ───────────────────────────────────── */
-.ia-body {
-  flex: 1;
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 0 10vw;
-}
-
-/* ── Scramble story lines ──────────────────────────────────────── */
-.ia-lines {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.ia-lines--out {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-}
-
-.ia-line-row {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.ia-line-num {
-  font: 600 9px / 1 'DM Sans', sans-serif;
-  letter-spacing: 0.16em;
-  color: rgba(119, 81, 161, 0.45);
-  width: 22px;
-  flex-shrink: 0;
-}
-.ia-line-bar {
-  width: 1px;
-  height: 28px;
-  background: rgba(119, 81, 161, 0.28);
-  flex-shrink: 0;
-}
-
-/* individual scramble-text container */
-.sl-text {
-  display: inline;
-  /* monospace keeps width stable during scramble — no layout shift */
-  font: 500 clamp(19px, 3.1vw, 44px) / 1.12 'Courier New', Courier, monospace;
-  letter-spacing: 0.01em;
-}
-.sl-ch {
-  display: inline-block;
-  /* smooth colour pop when a char locks in */
-  transition: color 0.07s ease;
-}
-.sl-off {
-  /* scrambling: dim purple */
-  color: rgba(119, 81, 161, 0.38);
-}
-.sl-on {
-  /* locked: warm off-white */
-  color: #ede9e0;
-}
-
-/* ── Logo wordmark (phase 2) ───────────────────────────────────── */
-.ia-logo {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0 10vw;
-  gap: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
-}
-.ia-logo--in {
-  opacity: 1;
-}
-
-.ia-wordmark {
-  display: flex;
-  align-items: baseline;
-  line-height: 1;
-}
-.ia-wm-ch {
-  display: inline-block;
-  font: 700 clamp(68px, 11.5vw, 148px) / 0.88 'DM Sans', sans-serif;
-  letter-spacing: -0.075em;
-  color: #ede9e0;
-  opacity: 0;
-  transform: translateY(32px);
-  filter: blur(12px);
-  /* each letter resolves: blur → sharp, slide up */
-  transition:
-    opacity   0.55s ease,
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    filter    0.55s ease;
-}
-.ia-wm-ch.on {
-  opacity: 1;
-  transform: translateY(0);
-  filter: blur(0);
-}
-/* the dot is the brand purple */
-.ia-wm-ch.dot { color: #7751a1; }
-
-.ia-tag {
-  margin: 0;
-  font: 600 clamp(9px, 0.95vw, 12px) / 1 'DM Sans', sans-serif;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(119, 81, 161, 0.48);
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.55s 0.12s ease, transform 0.55s 0.12s ease;
+  transition: opacity 0.5s 0.1s ease, transform 0.5s 0.1s ease;
 }
-.ia-tag.on {
+.ia-byro-tag.in {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* thin ruled line that draws itself */
-.ia-rule {
-  width: 0;
-  height: 1px;
-  background: rgba(119, 81, 161, 0.25);
-  transition: width 1s 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.ia-rule.on { width: 200px; }
-
-/* ── Bottom bar ────────────────────────────────────────────────── */
-.ia-bottom {
-  padding: 0 76px 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  opacity: 0;
-  animation: ia-fade-in 0.55s 0.65s ease forwards;
-}
-@keyframes ia-fade-in { to { opacity: 1; } }
-
-/* progress track */
-.ia-progress {
-  height: 1px;
-  background: rgba(119, 81, 161, 0.1);
-  border-radius: 1px;
-  overflow: hidden;
-}
-.ia-progress-fill {
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(119, 81, 161, 0.6) 45%,
-    rgba(192, 132, 252, 0.9)
-  );
-  box-shadow: 0 0 8px rgba(192, 132, 252, 0.4);
-  animation: ia-prog 4.9s cubic-bezier(0.4, 0, 0.6, 1) forwards;
-}
-@keyframes ia-prog {
-  0%   { width: 0;    }
-  55%  { width: 68%;  }
-  85%  { width: 91%;  }
-  100% { width: 100%; }
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 500px) {
+  .ia-stage      { gap: 12px; }
+  .ia-card       { padding: 14px 16px; gap: 10px; border-radius: 14px; }
+  .ia-card-emoji { font-size: 22px; }
+  .ia-byro-word,
+  .ia-byro-dot   { font-size: clamp(54px, 18vw, 80px); }
 }
 
-/* status text + pulsing dot */
-.ia-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 600 8px / 1 'DM Sans', sans-serif;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(119, 81, 161, 0.38);
-}
-.ia-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(119, 81, 161, 0.6);
-  flex-shrink: 0;
-  animation: ia-dot-pulse 1.6s ease-in-out infinite;
-}
-@keyframes ia-dot-pulse {
-  50% { opacity: 0.18; transform: scale(0.5); }
-}
-
-/* ── Responsive ────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .ia-hud-top   { padding: 24px 20px; }
-  .ia-bottom    { padding: 0 20px 24px; }
-  .ia-body      { padding: 0 7vw; }
-  .ia-logo      { padding: 0 7vw; }
-  .ia-tl        { top: 20px; left: 20px; }
-  .ia-tr        { top: 20px; right: 20px; }
-  .ia-bl        { bottom: 20px; left: 20px; }
-  .ia-br        { bottom: 20px; right: 20px; }
-  .ia-lines     { gap: 18px; }
-  .ia-line-row  { gap: 12px; }
-  .sl-text      { font-size: clamp(17px, 5.5vw, 28px); }
-}
-
-/* ── Reduced motion ────────────────────────────────────────────── */
+/* ── Reduced motion ─────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .ia-closing,
-  .ia-closing .ia-body,
-  .ia-closing .ia-hud-top,
-  .ia-closing .ia-bottom,
-  .ia-corner,
-  .ia-hud-top,
-  .ia-bottom,
-  .ia-wm-ch,
-  .ia-tag,
-  .ia-rule,
-  .ia-progress-fill,
-  .ia-dot,
-  .ia-beam {
+  .ia-overlay--out,
+  .ia-card,
+  .ia-byro,
+  .ia-solution-label,
+  .ia-byro-tag {
     animation-duration:  0.01ms !important;
     transition-duration: 0.01ms !important;
   }
