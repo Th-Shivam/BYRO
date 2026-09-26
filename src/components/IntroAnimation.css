@@ -16,13 +16,12 @@
 }
 
 .ia-overlay--out {
-  animation: ia-exit 0.9s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+  animation: ia-exit 0.8s cubic-bezier(0.86, 0, 0.07, 1) forwards;
 }
 
 @keyframes ia-exit {
-  0%   { clip-path: inset(0 0 0 0); opacity: 1; }
-  30%  { opacity: 0.6; }
-  100% { clip-path: inset(0 0 100% 0); opacity: 0; }
+  0%   { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 100% 0); }
 }
 
 .ia-grid {
