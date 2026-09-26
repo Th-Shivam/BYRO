@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import SplashCursor from './components/SplashCursor'
 import IntroAnimation from './components/IntroAnimation'
 import HeroSection from './components/HeroSection'
+import ProductStorySection from './components/ProductStorySection'
 import './App.css'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         </header>
 
         <HeroSection />
+        <ProductStorySection />
       </main>
     </>
   )

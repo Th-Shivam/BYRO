@@ -1,7 +1,7 @@
 import { ArrowRight, Play, Sparkles } from 'lucide-react'
 import mascot from '../../images/rook-mascot.png'
-import workspace from '../../images/byro-work.png'
 import heroBackdrop from '../../images/bg.png'
+import SharedProductPreview from './SharedProductPreview'
 
 export default function HeroSection() {
   return (
@@ -23,17 +23,8 @@ export default function HeroSection() {
           <span><i>✓</i> Built for focus</span>
         </div>
       </div>
-
       <img className="hero-mascot" src={mascot} alt="Byro mascot" />
-      <div className="workspace-preview">
-        <div className="preview-top">
-          <span className="preview-logo">✦ byro.</span>
-          <span>Work⌄</span>
-          <span className="preview-actions">☷ All &nbsp; + New &nbsp; ◉ &nbsp; ◎ &nbsp; ▣</span>
-          <span>⌕ Ask Byro &nbsp; <b className="preview-avatar">AR</b></span>
-        </div>
-        <img src={workspace} alt="Byro reputation workspace" />
-      </div>
+      <SharedProductPreview />
     </section>
   )
 }
