@@ -1,37 +1,236 @@
-.intro-overlay { position: fixed; inset: 0; z-index: 10000; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #17151b; background: #f8f6f1; }
-.intro-overlay--closing { animation: intro-wipe-up .78s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes intro-wipe-up { from { clip-path: inset(0); } to { clip-path: inset(100% 0 0); } }
-.intro-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.intro-wash { position: absolute; width: 48vw; height: 48vw; border-radius: 50%; filter: blur(20px); pointer-events: none; opacity: .65; }
-.intro-wash--top { top: -32vw; left: -12vw; background: radial-gradient(circle, rgba(228,215,255,.85), transparent 67%); }
-.intro-wash--bottom { right: -20vw; bottom: -30vw; background: radial-gradient(circle, rgba(240,225,209,.7), transparent 67%); }
-.intro-lines { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 11px; padding: 0 12vw; transition: opacity .65s ease, transform .65s ease; }
-.intro-lines--fade { opacity: 0; transform: translateY(-18px); }
-.intro-line { display: flex; align-items: center; gap: 15px; opacity: 0; transform: translateY(24px); transition: opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1); }
-.intro-line--visible { opacity: 1; transform: translateY(0); }
-.intro-line--dim { opacity: .28; }
-.intro-line-number { width: 23px; color: #987eb5; font: 600 10px/1 'DM Sans', sans-serif; letter-spacing: .08em; }
-.intro-line-bar { width: 3px; height: 0; flex-shrink: 0; border-radius: 9px; background: #7751a1; transition: height .55s cubic-bezier(.16,1,.3,1) .12s; }
-.intro-line--visible .intro-line-bar { height: 38px; }
-.intro-line-text { color: #25212a; font: 500 clamp(22px, 3.5vw, 46px)/1.1 'DM Sans', sans-serif; letter-spacing: -.045em; }
-.intro-logo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; opacity: 0; transform: scale(.9); transition: opacity .65s ease, transform .8s cubic-bezier(.16,1,.3,1); pointer-events: none; }
-.intro-logo--visible { opacity: 1; transform: scale(1); }
-.intro-logo-mark { position: relative; width: clamp(72px, 9vw, 108px); height: clamp(72px, 9vw, 108px); display: grid; place-items: center; color: #7751a1; }
-.intro-logo-ring { position: absolute; inset: 0; border: 1px solid rgba(119,81,161,.3); border-radius: 50%; }
-.intro-logo-ring--outer { animation: ring-spin 7s linear infinite; border-left-color: #7751a1; border-right-color: #7751a1; }
-.intro-logo-ring--inner { inset: 13%; border-color: rgba(119,81,161,.22); animation: ring-spin 5s linear infinite reverse; }
-.intro-logo-star { font-size: clamp(27px, 4vw, 43px); line-height: 1; animation: star-breathe 2.2s ease-in-out infinite; text-shadow: 0 8px 24px rgba(119,81,161,.28); }
-@keyframes ring-spin { to { transform: rotate(360deg); } }
-@keyframes star-breathe { 50% { transform: scale(1.14) rotate(12deg); } }
-.intro-logo-word { color: #17151b; font: 700 clamp(58px, 9vw, 116px)/.9 'DM Sans', sans-serif; letter-spacing: -.09em; }
-.intro-logo-word span { color: #7751a1; }
-.intro-logo-tag { margin-top: 5px; color: #927fa0; font: 600 clamp(10px, 1.1vw, 13px)/1 'DM Sans', sans-serif; letter-spacing: .19em; text-transform: uppercase; }
-.intro-footer { position: absolute; right: 7vw; bottom: 30px; left: 7vw; display: flex; justify-content: space-between; color: #9b8fa3; font: 600 9px/1 'DM Sans', sans-serif; letter-spacing: .15em; }
-.intro-loader-status { display: flex; align-items: center; gap: 8px; letter-spacing: .08em; }
-.intro-loader-status i { width: 6px; height: 6px; border-radius: 50%; background: #7751a1; box-shadow: 0 0 0 4px rgba(119,81,161,.12); animation: status-pulse 1.3s ease-in-out infinite; }
-@keyframes status-pulse { 50% { opacity: .35; transform: scale(.7); } }
-.intro-progress { position: absolute; right: 7vw; bottom: 18px; left: 7vw; height: 2px; overflow: hidden; border-radius: 99px; background: rgba(119,81,161,.12); }
-.intro-progress-bar { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #c4b0e1, #7751a1); animation: progress-fill 4.2s linear forwards; }
-@keyframes progress-fill { to { width: 100%; } }
-@media (max-width: 600px) { .intro-lines { padding: 0 9vw; gap: 10px; } .intro-line-number { width: 17px; font-size: 8px; } .intro-line { gap: 10px; } .intro-line-text { font-size: clamp(22px, 7vw, 32px); } .intro-footer { right: 9vw; bottom: 31px; left: 9vw; justify-content: flex-end; } .intro-footer > span:first-child { display: none; } .intro-progress { right: 9vw; bottom: 18px; left: 9vw; } }
-@media (prefers-reduced-motion: reduce) { .intro-overlay--closing, .intro-logo-ring, .intro-logo-star, .intro-loader-status i, .intro-progress-bar { animation-duration: .01ms !important; } .intro-line, .intro-logo, .intro-lines { transition-duration: .01ms; } }
+/* ══════════════════════════════════════════════════════════════════
+   IntroAnimation  ·  "FolderFloat" scattered knowledge concept (Interactive)
+   Theme: matches homepage (white bg · purple #7751a1 · DM Sans)
+   ══════════════════════════════════════════════════════════════════ */
+
+.ia-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fff 0%, #fff 45%, #f6f2ff 100%);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+.ia-overlay--out {
+  animation: ia-exit 0.8s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+}
+
+@keyframes ia-exit {
+  0%   { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 100% 0); }
+}
+
+.ia-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(133, 106, 185, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(133, 106, 185, 0.1) 1px, transparent 1px);
+  background-size: 82px 82px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 80%);
+  z-index: 1;
+}
+
+/* ── Folders Layout ────────────────────────────────────────────── */
+.ia-folders {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  z-index: 2;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ia-folders--out {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Container for scattered floating layout (4 folders) */
+.ia-folders-layout {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  max-width: 95vw;
+}
+
+/* Center text */
+.ia-folders-title-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: 700 clamp(32px, 5vw, 56px) / 1.1 'DM Sans', sans-serif;
+  letter-spacing: -0.04em;
+  color: #302938;
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  animation: ia-fade-in-title 0.8s ease forwards 0.8s;
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.95), 0 0 40px rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+
+@keyframes ia-fade-in-title {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Scattered Folders Positions */
+.ia-folder-wrap {
+  position: absolute;
+  opacity: 0;
+  /* Add subtle infinite floating animation */
+  animation: ia-fade-in-folder 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             ia-float 6s ease-in-out infinite alternate;
+}
+
+/* Folder 0: Top Left */
+.ia-folder-wrap-0 {
+  top: 20px;
+  left: 20px;
+  animation-delay: 0.2s, 0.2s;
+  transform-origin: center;
+}
+
+/* Folder 1: Bottom Right */
+.ia-folder-wrap-1 {
+  bottom: 20px;
+  right: 20px;
+  animation-delay: 0.4s, 1s;
+  transform-origin: center;
+}
+
+/* Folder 2: Top Right */
+.ia-folder-wrap-2 {
+  top: 20px;
+  right: 20px;
+  animation-delay: 0.6s, 1.8s;
+  transform-origin: center;
+}
+
+/* Folder 3: Bottom Left */
+.ia-folder-wrap-3 {
+  bottom: 20px;
+  left: 20px;
+  animation-delay: 0.8s, 0.6s;
+  transform-origin: center;
+}
+
+@keyframes ia-fade-in-folder {
+  from { opacity: 0; margin-top: 40px; }
+  to { opacity: 1; margin-top: 0; }
+}
+
+@keyframes ia-float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(5px) rotate(-1deg); }
+}
+
+/* Rotations for a natural scattered look */
+.ia-folder-wrap-0 .folder-float { transform: rotate(-8deg); }
+.ia-folder-wrap-1 .folder-float { transform: rotate(6deg); }
+.ia-folder-wrap-2 .folder-float { transform: rotate(4deg); }
+.ia-folder-wrap-3 .folder-float { transform: rotate(-5deg); }
+
+/* ── Solution block ────────────────────────────────────────────── */
+.ia-solution {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ia-byro {
+  display: flex;
+  align-items: baseline;
+  opacity: 0;
+  transform: scale(0.82);
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ia-byro.in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ia-byro-word {
+  font: 700 clamp(64px, 12vw, 130px) / 0.9 'DM Sans', sans-serif;
+  letter-spacing: -0.08em;
+  color: #17151b;
+}
+.ia-byro-dot {
+  font: 700 clamp(64px, 12vw, 130px) / 0.9 'DM Sans', sans-serif;
+  letter-spacing: -0.08em;
+  color: #7751a1;
+}
+
+.ia-byro-tag {
+  margin: 0;
+  font: 600 clamp(10px, 1.2vw, 14px) / 1 'DM Sans', sans-serif;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(119, 81, 161, 0.65);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.ia-byro-tag.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .ia-folders-layout {
+    height: 800px;
+    width: 100%;
+  }
+  .ia-folder-wrap-0 { top: 0; left: 10px; }
+  .ia-folder-wrap-1 { bottom: 0; right: 10px; }
+  .ia-folder-wrap-2 { top: 180px; right: 10px; }
+  .ia-folder-wrap-3 { bottom: 180px; left: 10px; }
+  
+  .ia-folders-title-center {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: normal;
+  }
+}
+
+@media (max-width: 500px) {
+  .ia-byro-word,
+  .ia-byro-dot   { font-size: clamp(54px, 18vw, 80px); }
+  .ia-folders-layout { height: 950px; }
+  .ia-folder-wrap-0 { top: 0; left: 50%; transform: translateX(-50%); }
+  .ia-folder-wrap-1 { bottom: 0; right: auto; left: 50%; transform: translateX(-50%); }
+  .ia-folder-wrap-2 { top: 220px; right: auto; left: 50%; transform: translateX(-50%); }
+  .ia-folder-wrap-3 { bottom: 220px; left: 50%; transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ia-overlay--out,
+  .ia-folders--out,
+  .ia-folders-title-center,
+  .ia-folder-wrap,
+  .ia-byro,
+  .ia-byro-tag {
+    animation-duration:  0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
