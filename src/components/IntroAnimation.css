@@ -216,11 +216,18 @@
 @media (max-width: 500px) {
   .ia-byro-word,
   .ia-byro-dot   { font-size: clamp(54px, 18vw, 80px); }
-  .ia-folders-layout { height: 950px; }
-  .ia-folder-wrap-0 { top: 0; left: 50%; transform: translateX(-50%); }
-  .ia-folder-wrap-1 { bottom: 0; right: auto; left: 50%; transform: translateX(-50%); }
-  .ia-folder-wrap-2 { top: 220px; right: auto; left: 50%; transform: translateX(-50%); }
-  .ia-folder-wrap-3 { bottom: 220px; left: 50%; transform: translateX(-50%); }
+  .ia-folders-layout { height: 100vh; min-height: 650px; }
+  .ia-folder-wrap { 
+    left: 0 !important; 
+    right: 0 !important; 
+    margin: 0 auto; 
+    width: 260px;
+    scale: 0.8;
+  }
+  .ia-folder-wrap-0 { top: 2%; }
+  .ia-folder-wrap-2 { top: 26%; }
+  .ia-folder-wrap-3 { top: 50%; bottom: auto; }
+  .ia-folder-wrap-1 { top: 74%; bottom: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

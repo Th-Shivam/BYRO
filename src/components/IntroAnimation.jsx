@@ -37,7 +37,7 @@ const FOLDERS = [
   }
 ];
 
-export default function IntroAnimation({ onComplete }) {
+export default function IntroAnimation({ onComplete, onExitStart }) {
   const [step, setStep] = useState(0);
   const [openedCount, setOpenedCount] = useState(0);
   const openedSet = useRef(new Set());
