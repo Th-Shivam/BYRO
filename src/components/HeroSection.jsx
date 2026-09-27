@@ -25,7 +25,7 @@ export default function HeroSection() {
             className="flex items-center gap-3 px-6 py-4 text-[13px] font-semibold"
             {...hoverProps}
           >
-            See BYRO in action <ArrowRight size={16} />
+            Join the waitlist <ArrowRight size={16} />
           </HoverBorderGradient>
           <a className="play-link" href="#how"><span><Play size={12} fill="currentColor" /></span> How it works</a>
         </div>
