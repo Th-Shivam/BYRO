@@ -19,11 +19,14 @@ export default function SharedProductPreview() {
       const scrolled = window.scrollY
       const isMobile = viewportWidth <= 720
 
+      const heroElement = preview.closest('.hero')
+      const heroBottom = heroElement ? (heroElement.offsetTop + heroElement.offsetHeight) : viewportHeight
+
       // This is the exact card placement seen at the bottom of the hero.
       const startWidth = Math.min(viewportWidth * (isMobile ? 1.06 : 0.76), 1200)
       const startHeight = isMobile ? 260 : 370
       const startLeft = (viewportWidth - startWidth) / 2
-      const startTop = viewportHeight - startHeight + (isMobile ? 115 : 145)
+      const startTop = heroBottom - startHeight + (isMobile ? 115 : 145)
 
       // While the hero is on screen the card rides the page like any other
       // element — no early lift-off.
