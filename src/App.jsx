@@ -51,7 +51,7 @@ function App() {
             className="flex items-center gap-3 px-5 py-3.5 text-[13px] font-semibold max-[720px]:px-3.5 max-[720px]:py-[11px] max-[720px]:text-[11px]"
             {...hoverProps}
           >
-            See BYRO in action <ArrowRight size={16} />
+            Join the waitlist <ArrowRight size={16} />
           </HoverBorderGradient>
         </header>
 

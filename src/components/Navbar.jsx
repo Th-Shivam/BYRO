@@ -23,7 +23,7 @@ export default function Navbar() {
       {/* Action CTA */}
       <div className="flex items-center">
         <button className="hidden sm:flex items-center justify-center px-5 py-2.5 rounded-full bg-[#111] text-white font-medium text-[15px] hover:bg-black transition-all gap-2 shadow-sm">
-          <span>See BYRO in action</span>
+          <span>Join the waitlist</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
